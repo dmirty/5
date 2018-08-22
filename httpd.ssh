@@ -1,26 +1,27 @@
 
 #!/bin/bash
-
+#Если кол-во процессов htppd больше 100 считаем что нас ddosят
+# Считаем кол-во процесов apache
 my=$(ps aux | grep httpd | wc -l)
+# Парсим лог и смтрим на 3 самых активных ip
 ddosip=$(cat /var/log/httpd/access_log | awk '{ print $1 ; }' | sort | uniq -c | sort -n -r | head -n 3)
-outvar=$(echo $ddosip | cut -d' ' -f2) 
+# В эту переменную записываем  самый активный Ip адрес чтобы потом его добавить в файл .htaccess
+outvar=$(echo $ddosip | cut -d' ' -f2)
 
 
-if [[ $my -gt 2 ]];
+if [[ $my -gt 100 ]];
 then
- 
- 
+
+
  echo -e "Here is a list of ip and requsts \n $ddosip"
- 
+
  echo "Deny from $outvar" >> /var/www/html/.htaccess
 
- 
- 
+
+
 else
 
-echo "the count $my is less then 2"
+echo "the count $my is less then 100"
 
 fi
-
-
 
