@@ -1,0 +1,26 @@
+
+#!/bin/bash
+
+my=$(ps aux | grep httpd | wc -l)
+ddosip=$(cat /var/log/httpd/access_log | awk '{ print $1 ; }' | sort | uniq -c | sort -n -r | head -n 3)
+outvar=$(echo $ddosip | cut -d' ' -f2) 
+
+
+if [[ $my -gt 2 ]];
+then
+ 
+ 
+ echo -e "Here is a list of ip and requsts \n $ddosip"
+ 
+ echo "Deny from $outvar" >> /var/www/html/.htaccess
+
+ 
+ 
+else
+
+echo "the count $my is less then 2"
+
+fi
+
+
+
